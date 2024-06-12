@@ -1,0 +1,1331 @@
+<svg version="1.1" baseProfile="full" width="4795.0" height="2377.0" viewbox="0 0 4795 2377" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events">
+<desc >#.interface: fill=lightblue
+#.enumeration: fill=lightgreen
+#.type: fill=lightgray
+[&lt;interface&gt;Anchorable|+anchors: Point\[\]|+getAnchors(): Point\[\];+setupAnchors(): void]
+[Drawable]&lt;:--[Anchorable]
+[Anchorable]  - 0..* [Point]
+[Drawable||+abstract draw(): void;+abstract hasPoint(): boolean;+abstract getCenter(): Point;+abstract move(): void;+abstract getBoundingBox(): { x: number; y: number; width: number; height: number; }]
+[Movable]&lt;:--[Drawable]
+[&lt;interface&gt;Linkable||+linkTo(): void;+getLinkingPoint(): Point]
+[&lt;interface&gt;Movable||+move(): void]
+[&lt;interface&gt;Rotatable||+rotate(): void]
+[BoardTool|\#whiteboardState: WhiteboardState|+abstract onLeftMouseDown(): void;+abstract onLeftMouseUp(): void;+abstract onRightMouseDown(): void;+abstract onRightMouseUp(): void;+abstract onMouseMove(): void]
+[BoardTool]  -  [WhiteboardState]
+[EventManager|-canvas: HTMLCanvasElement;-mouseEventListeners: Map&lt;MouseEventType, MouseEventHandler\[\]&gt;;-keybindManager: KeybindManager|-addCanvasMouseListener(): void;+registerMouseEvent(): void;+unregisterMouseEvent(): void;+triggerMouseEvent(): void;+addKeybind(): void;+removeKeybind(): void;+clearListeners(): void]
+[EventManager]  -  [KeybindManager]
+[KeybindManager|-keybindActions: Map&lt;string, () =&gt; void&gt;|-registerKeybindListeners(): void;-handleKeyDown(): void;-getKeySignature(): string;+addKeybind(): void;+removeKeybind(): void;+removeKeybindListeners(): void]
+[Middleware|\#whiteboardState: WhiteboardState|+abstract apply(): Promise&lt;boolean&gt;]
+[Middleware]  -  [WhiteboardState]
+[MiddlewareManager|-whiteboardState: WhiteboardState;-middlewares: Middleware\[\]|+initializeMiddlewares(): void;+applyMiddlewares(): Promise&lt;void&gt;]
+[MiddlewareManager]  -  [WhiteboardState]
+[MiddlewareManager]  - 0..* [Middleware]
+[ToolSelector|-tools: BoardTool\[\];-currentTool: number;-whiteboardState: WhiteboardState;-eventManager: EventManager|+switchTool(): void;+initializeTools(): void;+registerKeybinds(): void;+registerEventListeners(): void;+getCurrentTool(): BoardTool;+getCurrentToolIndex(): number]
+[&lt;enumeration&gt;ToolKeybinds|KEYBIND_PEN;KEYBIND_ERASER;KEYBIND_SELECTOR;KEYBIND_TEXT]
+[&lt;enumeration&gt;ToolIndices|INDEX_PEN;INDEX_ERASER;INDEX_SELECTOR;INDEX_TEXT]
+[ToolSelector]  - 0..* [BoardTool]
+[ToolSelector]  -  [WhiteboardState]
+[ToolSelector]  -  [EventManager]
+[WhiteboardMaster|-canvas: HTMLCanvasElement;-state: WhiteboardState;-eventManager: EventManager;-toolSelector: ToolSelector|+clearListeners(): void;+getToolSelector(): ToolSelector;+getState(): WhiteboardState]
+[WhiteboardMaster]  -  [WhiteboardState]
+[WhiteboardMaster]  -  [EventManager]
+[WhiteboardMaster]  -  [ToolSelector]
+[WhiteboardState|-canvas: HTMLCanvasElement;-ctx: CanvasRenderingContext2D;-eventManager: EventManager;-currentStroke: Stroke;-drawingHistory: Drawable\[\];-redoHistory: Drawable\[\];-stateHistory: Drawable\[\]\[\];-middlewareManager: MiddlewareManager;+redo: () =&gt; void;+clear: () =&gt; void|-_drawBoundingBox(): void;-registerKeybinds(): void;-saveState(): void;-restoreState(): void;+redrawCanvas(): void;+clearAtPoint(): void;+clearCurrentStroke(): void;+addDrawable(): void;+startStroke(): void;+addPointToCurrentStroke(): void;+endCurrentStroke(): Promise&lt;void&gt;;+undo(): void;+getDrawingHistory(): Drawable\[\];+getCurrentStroke(): Stroke;+getCtx(): CanvasRenderingContext2D]
+[WhiteboardState]  -  [EventManager]
+[WhiteboardState]  -  [Stroke]
+[WhiteboardState]  - 0..* [Drawable]
+[WhiteboardState]  - 0..* [Drawable]
+[WhiteboardState]  - 0..* [Drawable]
+[Arrow|-startPoint: Point;-endPoint: Point|+setStartPoint(): void;+setEndPoint(): void;+getStartPoint(): Point;+getEndPoint(): Point;+draw(): void;-drawArrowhead(): void;+getBoundingBox(): { x: number; y: number; width: number; height: number; };+move(): void;+getCenter(): Point;+linkTo(): void;+getLinkingPoint(): Point;+hasPoint(): boolean]
+[Linkable]&lt;:--[Arrow]
+[Drawable]&lt;:--[Arrow]
+[Arrow]  -  [Point]
+[Arrow]  -  [Point]
+[Circle|+radius: number|+static buildShape(): Shape;+setupAnchors(): void;+draw(): void;+hasPoint(): boolean;+getCenter(): Point;+getBoundingBox(): { x: number; y: number; width: number; height: number; };+toString(): string]
+[Shape]&lt;:-[Circle]
+[Point|+x: number;+y: number|+equals(): boolean;+toString(): string;+getCopy(): Point]
+[Rectangle|-points: Point\[\];+width: number;+height: number|+static buildShape(): Shape;+draw(): void;+setupAnchors(): void;+hasPoint(): boolean;+move(): void;+rotate(): void;+getCenter(): Point;+getBoundingBox(): { x: number; y: number; width: number; height: number; };+toString(): string]
+[Shape]&lt;:-[Rectangle]
+[Rotatable]&lt;:--[Rectangle]
+[Segment|-start: Point;-end: Point|+getStart(): Point;+getEnd(): Point;+getLength(): number;+hasPoint(): boolean]
+[Segment]  -  [Point]
+[Segment]  -  [Point]
+[Shape|+anchors: Point\[\];+static count: number;\#id: number;+startPoint: Point|+abstract toString(): string;+abstract draw(): void;+abstract hasPoint(): boolean;+abstract getCenter(): Point;+abstract getBoundingBox(): { x: number; y: number; width: number; height: number; };+abstract setupAnchors(): void;\#drawAnchors(): void;+getAnchors(): Point\[\];+move(): void;+equals(): boolean]
+[Anchorable]&lt;:--[Shape]
+[Drawable]&lt;:--[Shape]
+[Shape]  - 0..* [Point]
+[Stroke|-points: Point\[\]|+addPoint(): void;+draw(): void;+hasPoint(): boolean;+getBoundingBox(): { x: number; y: number; width: number; height: number; };+getPoints(): Point\[\];+setPoints(): void;+removePoint(): void;+linkTo(): void;+getLinkingPoint(): Point;+getCenter(): Point;+move(): void]
+[Linkable]&lt;:--[Stroke]
+[Drawable]&lt;:--[Stroke]
+[Stroke]  - 0..* [Point]
+[Triangle|+points: Point\[\]|+static buildShape(): Shape;+draw(): void;+setupAnchors(): void;+hasPoint(): boolean;+move(): void;+getCenter(): Point;+getBoundingBox(): { x: number; y: number; width: number; height: number; };+toString(): string;+rotate(): void]
+[Shape]&lt;:-[Triangle]
+[Rotatable]&lt;:--[Triangle]
+[WhiteboardText|-text: string;-position: Point;-font: string;-color: string|+draw(): void;+hasPoint(): boolean;+getCenter(): Point;+move(): void;+getBoundingBox(): { x: number; y: number; width: number; height: number; }]
+[Drawable]&lt;:-[WhiteboardText]
+[WhiteboardText]  -  [Point]
+[Vector2|+x: number;+y: number|]
+[MathUtils||+static distance(): number;+static calculateAngle(): number]
+[ShapeSizeRotationDetector||+static calculateCentroid(): Point;+static centerPoints(): Point\[\];+static rotatePoints(): Point\[\];+static calculateCovarianceMatrix(): \[number, number, number\];+static calculateEigenvaluesAndEigenvectors(): \[\[number, number\], \[number, number\], number, number\];+static calculateRotationAngle(): number;+static getBoundingBox(): BoundingBox;+static findSizeAndRotation(): ShapeSizeRotation;+static findAllDistances(): DistanceTuple\[\];+static detectBestRectangle(): Rectangle;+static detectBestTriangle(): Triangle]
+[&lt;interface&gt;ShapeSizeRotation|+angle: number;+centroid: Point;+minX: number;+maxX: number;+minY: number;+maxY: number|]
+[&lt;interface&gt;BoundingBox|+minX: number;+maxX: number;+minY: number;+maxY: number|]
+[&lt;interface&gt;DistanceTuple|+point1: Point;+point2: Point;+distance: number|]
+[ShapeSizeRotation]  -  [Point]
+[DistanceTuple]  -  [Point]
+[DistanceTuple]  -  [Point]
+[AnchoringManager||-getDrawables(): Drawable\[\];-getLastStroke(): Stroke;-getAllAnchorables(): Anchorable\[\];-getClosestAnchorableToPoint(): \[Anchorable, number\];-linkWithArrow(): void;+apply(): Promise&lt;boolean&gt;]
+[Middleware]&lt;:-[AnchoringManager]
+[ShapeClassifier||+classify(): Promise&lt;PossibleShape&gt;;+apply(): Promise&lt;boolean&gt;]
+[Middleware]&lt;:-[ShapeClassifier]
+[StrokeAdjuster||+standardDeviation(): Promise&lt;boolean&gt;;+linearRegression(): Promise&lt;boolean&gt;;+apply(): Promise&lt;boolean&gt;]
+[Middleware]&lt;:-[StrokeAdjuster]
+[Eraser|-isErasing: boolean|+onLeftMouseDown(): void;+onLeftMouseUp(): void;+onRightMouseDown(): void;+onRightMouseUp(): void;+onMouseMove(): void]
+[BoardTool]&lt;:-[Eraser]
+[Pen|-isDrawing: boolean|+onLeftMouseDown(): void;+onLeftMouseUp(): void;+onRightMouseDown(): void;+onRightMouseUp(): void;+onMouseMove(): void]
+[BoardTool]&lt;:-[Pen]
+[Selector|-selected: Drawable\[\];-isSelecting: boolean;-isMoving: boolean;-selectStartPosition: Point;-moveStartPosition: Point|-selectAvailableShapes(): void;-drawSelectionBox(): void;-moveSelectedShapes(): void;-drawSelectedBoundingBox(): void;+onLeftMouseDown(): void;+onLeftMouseUp(): void;+onRightMouseDown(): void;+onRightMouseUp(): void;+onMouseMove(): void]
+[BoardTool]&lt;:-[Selector]
+[Selector]  - 0..* [Drawable]
+[Selector]  -  [Point]
+[Selector]  -  [Point]
+[Text|-inputElement: HTMLInputElement|+onLeftMouseDown(): void;-createInputElement(): void;-submitText(): void;-removeInputElement(): void;+onLeftMouseUp(): void;+onRightMouseDown(): void;+onRightMouseUp(): void;+onMouseMove(): void]
+[BoardTool]&lt;:-[Text]</desc>
+<g stroke-width="1.0" text-align="left" font="12pt Helvetica, Arial, sans-serif" font-size="12pt" font-family="Helvetica" font-weight="normal" font-style="normal">
+<g font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" stroke-width="3.0" stroke-linejoin="round" stroke-linecap="round" stroke="#33322E">
+<g stroke="transparent" fill="transparent">
+<rect x="0.0" y="0.0" height="2377.0" width="4795.0" stroke="none"></rect>
+</g>
+<g transform="translate(48, 8)" fill="#33322E">
+<g transform="translate(20, 20)" fill="#eee8d5" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal">
+<g stroke-dasharray="6 6">
+<path d="M2314.6 1339.4 L2027.25 1417 L2027.25 1467 L2027.3 1467.0 " fill="none"></path>
+</g>
+<path d="M2316.0 1344.6 L2314.6 1339.4 L2313.2 1334.3 L2327.5 1336.0 Z"></path>
+<text x="1675.3" y="2153.8" stroke="none">0..*</text>
+<path d="M1932.3 1525.8 L-40 1625 L-40 1811.5 L-40 1811.5 L-40 1998 L-40 1998 L1710.25 2161.7800436502525 L1710.3 2161.8 " fill="none"></path>
+<g stroke-dasharray="6 6">
+<path d="M2077.8 973.3 L2077.75 1164 L2327.5 1239.5370591751346 L2327.5 1239.5 " fill="none"></path>
+</g>
+<path d="M2083.1 973.3 L2077.8 973.3 L2072.4 973.3 L2077.8 960.0 Z"></path>
+<path d="M2428.5 649.7 L2521.5 686 L2636.5 780.4501718213058 L2636.5 780.5 " fill="none"></path>
+<path d="M631.5 1397.0 L631.5 1417 L631.5 1437 L631.5 1437.0 " fill="none"></path>
+<path d="M1409.5 600.7 L2585 686 L2636.5 740.1032967032967 L2636.5 740.1 " fill="none"></path>
+<path d="M2645.0 417.0 L2876 493 L2876 589.5 L2876 589.5 L2876 686 L2876 686 L2870.686192468619 706 L2870.7 706.0 " fill="none"></path>
+<text x="1220.5" y="535.0" stroke="none">0..*</text>
+<path d="M2338.0 382.2 L1255.5 493 L1255.5 543 L1255.5 543.0 " fill="none"></path>
+<text x="2282.5" y="505.0" stroke="none">0..*</text>
+<path d="M2255.1 473.0 L2274.5 493 L2274.5 513 L2274.5 513.0 " fill="none"></path>
+<path d="M2298.0 389.0 L2972.75 493 L2972.75 589.5 L2972.75 589.5 L2972.75 686 L2972.75 686 L2959.3399581589956 706 L2959.3 706.0 " fill="none"></path>
+<path d="M2006.0 375.7 L140.75 493 L140.75 589.5 L140.75 589.5 L140.75 686 L140.75 686 L140.75 925 L140.75 925 L140.75 1164 L140.75 1164 L344.5 1216.5203769740194 L344.5 1216.5 " fill="none"></path>
+<path d="M2427.3 128.2 L3259.25 240 L3259.25 366.5 L3259.25 366.5 L3259.25 493 L3259.25 493 L3259.25 589.5 L3259.25 589.5 L3259.25 686 L3259.25 686 L2988.5 830.8444320089535 L2988.5 830.8 " fill="none"></path>
+<path d="M2156.3 118.3 L180.75 240 L180.75 366.5 L180.75 366.5 L180.75 493 L180.75 493 L180.75 589.5 L180.75 589.5 L180.75 686 L180.75 686 L180.75 925 L180.75 925 L180.75 1164 L180.75 1164 L344.5 1209.955352190793 L344.5 1210.0 " fill="none"></path>
+<path d="M2201.4 194.0 L2152 240 L2152 260 L2152.0 260.0 " fill="none"></path>
+<path d="M2636.5 963.1 L1708.75 1164 L918.5 1256.7979809700626 L918.5 1256.8 " fill="none"></path>
+<path d="M2636.5 970.7 L1892.25 1164 L1892.25 1290.5 L1892.25 1290.5 L1892.25 1417 L1892.25 1417 L1892.25 1521 L1892.25 1521 L1892.25 1625 L1892.25 1625 L2227 1758.1858666666667 L2227.0 1758.2 " fill="none"></path>
+<text x="2629.5" y="1194.2" stroke="none">0..*</text>
+<path d="M2743.8 1144.0 L2737.5 1164 L2664.5 1202.2380952380952 L2664.5 1202.2 " fill="none"></path>
+<text x="2629.5" y="1226.7" stroke="none">0..*</text>
+<path d="M2872.3 1144.0 L2877.75 1164 L2664.5 1234.6643745907006 L2664.5 1234.7 " fill="none"></path>
+<text x="2629.5" y="1235.8" stroke="none">0..*</text>
+<path d="M2941.0 1144.0 L2952.75 1164 L2664.5 1243.8327859879585 L2664.5 1243.8 " fill="none"></path>
+<g stroke-dasharray="6 6">
+<path d="M231.8 1570.0 L134 1625 L134 1645 L134.0 1645.0 " fill="none"></path>
+</g>
+<path d="M234.4 1574.7 L231.8 1570.0 L229.2 1565.4 L243.4 1563.5 Z"></path>
+<g stroke-dasharray="6 6">
+<path d="M2314.2 1300.4 L174 1417 L174 1521 L174 1521 L174 1625 L174 1625 L169.71045576407505 1645 L169.7 1645.0 " fill="none"></path>
+</g>
+<path d="M2314.5 1305.7 L2314.2 1300.4 L2313.9 1295.1 L2327.5 1299.7 Z"></path>
+<path d="M134.0 1978.0 L134 1998 L1710.25 2160.9702336096457 L1710.3 2161.0 " fill="none"></path>
+<path d="M268.0 1832.1 L1346 1998 L1710.25 2137.829602686066 L1710.3 2137.8 " fill="none"></path>
+<path d="M3812.6 1905.8 L3989 1998 L3989 2048 L3989.0 2048.0 " fill="none"></path>
+<path d="M3815.0 1901.0 L3812.6 1905.8 L3810.1 1910.5 L3800.8 1899.6 Z"></path>
+<path d="M3813.3 1875.1 L4163 1998 L4178.626822157435 2018 L4178.6 2018.0 " fill="none"></path>
+<path d="M3815.1 1870.1 L3813.3 1875.1 L3811.6 1880.2 L3800.8 1870.7 Z"></path>
+<g stroke-dasharray="6 6">
+<path d="M4547.6 1856.8 L4431 1998 L4415.373177842565 2018 L4415.4 2018.0 " fill="none"></path>
+</g>
+<path d="M4551.7 1860.2 L4547.6 1856.8 L4543.5 1853.4 L4556.1 1846.5 Z"></path>
+<path d="M1453.2 1888.0 L1386 1998 L1710.25 2134.7151198524894 L1710.3 2134.7 " fill="none"></path>
+<path d="M1538.6 1888.0 L1594 1998 L1712.786443148688 2100.5 L1712.8 2100.5 " fill="none"></path>
+<g stroke-dasharray="6 6">
+<path d="M2135.6 1528.4 L3548 1625 L3557.0348525469167 1645 L3557.0 1645.0 " fill="none"></path>
+</g>
+<path d="M2135.9 1523.1 L2135.6 1528.4 L2135.2 1533.7 L2122.3 1527.5 Z"></path>
+<g stroke-dasharray="6 6">
+<path d="M2677.8 1309.3 L3716.5 1417 L3716.5 1521 L3716.5 1521 L3716.5 1625 L3716.5 1625 L3707.4651474530833 1645 L3707.5 1645.0 " fill="none"></path>
+</g>
+<path d="M2678.3 1304.0 L2677.8 1309.3 L2677.2 1314.6 L2664.5 1308.0 Z"></path>
+<text x="1693.9" y="2092.5" stroke="none">0..*</text>
+<path d="M3463.8 1827.2 L1634 1998 L1728.8797376093294 2100.5 L1728.9 2100.5 " fill="none"></path>
+<g stroke-dasharray="6 6">
+<path d="M437.3 1528.2 L2027.25 1625 L2227 1736.6205992509363 L2227.0 1736.6 " fill="none"></path>
+</g>
+<path d="M437.6 1522.9 L437.3 1528.2 L437.0 1533.5 L424.0 1527.4 Z"></path>
+<g stroke-dasharray="6 6">
+<path d="M2496.0 1398.8 L2496 1417 L2496 1521 L2496 1521 L2496 1625 L2496 1625 L2470.6648793565682 1660 L2470.7 1660.0 " fill="none"></path>
+</g>
+<path d="M2501.3 1398.8 L2496.0 1398.8 L2490.7 1398.8 L2496.0 1385.5 Z"></path>
+<text x="1840.3" y="2136.6" stroke="none">0..*</text>
+<path d="M2361.0 1963.0 L2361 1998 L1875.25 2144.6011878574573 L1875.3 2144.6 " fill="none"></path>
+<path d="M3813.8 1851.9 L4471 1998 L4498.34693877551 2033 L4498.3 2033.0 " fill="none"></path>
+<path d="M3814.9 1846.7 L3813.8 1851.9 L3812.6 1857.1 L3800.8 1849.0 Z"></path>
+<g stroke-dasharray="6 6">
+<path d="M4595.3 1859.5 L4625 1998 L4620.918367346939 2033 L4620.9 2033.0 " fill="none"></path>
+</g>
+<path d="M4600.5 1858.4 L4595.3 1859.5 L4590.1 1860.7 L4592.5 1846.5 Z"></path>
+<path d="M2677.0 1357.1 L2839.75 1417 L2839.75 1521 L2839.75 1521 L2839.75 1625 L2839.75 1625 L2839.75 1682.5 L2839.8 1682.5 " fill="none"></path>
+<path d="M2678.9 1352.1 L2677.0 1357.1 L2675.2 1362.1 L2664.5 1352.5 Z"></path>
+<path d="M2839.8 1940.5 L2839.75 1998 L1875.25 2155.9863896848137 L1875.3 2156.0 " fill="none"></path>
+<path d="M3097.3 1884.0 L3097.25 1998 L1875.25 2158.653890379456 L1875.3 2158.7 " fill="none"></path>
+<path d="M3280.1 1861.5 L3219.75 1998 L1875.25 2159.5849684653117 L1875.3 2159.6 " fill="none"></path>
+<path d="M3313.2 1861.5 L3343 1998 L1875.25 2160.3732462506046 L1875.3 2160.4 " fill="none"></path>
+<path d="M1088.3 609.9 L464.75 686 L464.75 852.5 L464.8 852.5 " fill="none"></path>
+<path d="M1088.9 615.2 L1088.3 609.9 L1087.6 604.6 L1101.5 608.3 Z"></path>
+<path d="M1088.6 632.8 L883.25 686 L883.25 882.5 L883.3 882.5 " fill="none"></path>
+<path d="M1089.9 637.9 L1088.6 632.8 L1087.3 627.6 L1101.5 629.4 Z"></path>
+<path d="M1250.7 649.3 L1247.75 686 L1247.75 875 L1247.8 875.0 " fill="none"></path>
+<path d="M1256.0 649.7 L1250.7 649.3 L1245.4 648.9 L1251.8 636.0 Z"></path>
+<path d="M2107.3 612.6 L1577.25 686 L1577.25 848.5 L1577.3 848.5 " fill="none"></path>
+<path d="M2108.0 617.9 L2107.3 612.6 L2106.6 607.4 L2120.5 610.8 Z"></path>
+<path d="M2107.5 628.0 L1856.25 686 L1856.25 848.5 L1856.3 848.5 " fill="none"></path>
+<path d="M2108.7 633.2 L2107.5 628.0 L2106.3 622.8 L2120.5 625.0 Z"></path>
+<path d="M2441.8 603.5 L3423.75 686 L3423.75 788.5 L3423.8 788.5 " fill="none"></path>
+<path d="M2442.2 598.2 L2441.8 603.5 L2441.3 608.9 L2428.5 602.4 Z"></path>
+<text x="2629.5" y="1239.6" stroke="none">0..*</text>
+<path d="M3279.3 1005.1 L2992.75 1164 L2664.5 1247.590588827378 L2664.5 1247.6 " fill="none"></path>
+<path d="M3423.8 1061.5 L3423.75 1164 L3423.75 1290.5 L3423.75 1290.5 L3423.75 1417 L3423.75 1417 L3423.75 1521 L3423.75 1521 L3423.75 1625 L3423.75 1625 L3423.75 1811.5 L3423.75 1811.5 L3423.75 1998 L3423.75 1998 L1875.25 2160.8251072961375 L1875.3 2160.8 " fill="none"></path>
+<path d="M3568.3 1007.8 L3840.75 1164 L3840.75 1290.5 L3840.75 1290.5 L3840.75 1417 L3840.75 1417 L3840.75 1521 L3840.75 1521 L3840.75 1625 L3840.75 1625 L3840.75 1811.5 L3840.75 1811.5 L3840.75 1998 L3840.75 1998 L1875.25 2162.5914306640625 L1875.3 2162.6 " fill="none"></path>
+<path d="M2318.3 678.0 L2322.25 686 L2322.25 826 L2322.3 826.0 " fill="none"></path>
+<path d="M2323.0 675.6 L2318.3 678.0 L2313.5 680.3 L2312.4 666.0 Z"></path>
+<g data-name="Anchorable">
+<g fill="lightblue" stroke="#33322E" data-name="Anchorable">
+<rect x="1932.3" y="1467.0" height="108.0" width="190.0" data-name="Anchorable"></rect>
+<path d="M1932.3 1498.0 L2122.3 1498.0" fill="none" data-name="Anchorable"></path>
+<path d="M1932.3 1529.0 L2122.3 1529.0" fill="none" data-name="Anchorable"></path>
+</g>
+<g transform="translate(1932.25, 1467)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Anchorable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Anchorable">
+<a id="src/interfaces/Anchorable.ts.Anchorable" xlink:href="src/interfaces/Anchorable.ts"><text x="87.0" y="13.5" stroke="none" text-anchor="middle" data-name="Anchorable">Anchorable</text></a>
+
+</g>
+</g>
+<g transform="translate(1932.25, 1498)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Anchorable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Anchorable">
+<text x="0.0" y="13.5" stroke="none" data-name="Anchorable">+anchors: Point[]</text>
+
+</g>
+</g>
+<g transform="translate(1932.25, 1529)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Anchorable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Anchorable">
+<text x="0.0" y="13.5" stroke="none" data-name="Anchorable">+getAnchors(): Point[]</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Anchorable">+setupAnchors(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="Drawable">
+<g fill="#eee8d5" stroke="#33322E" data-name="Drawable">
+<rect x="2327.5" y="1195.5" height="190.0" width="337.0" data-name="Drawable"></rect>
+<path d="M2327.5 1226.5 L2664.5 1226.5" fill="none" data-name="Drawable"></path>
+<path d="M2327.5 1234.5 L2664.5 1234.5" fill="none" data-name="Drawable"></path>
+</g>
+<g transform="translate(2327.5, 1195.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Drawable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Drawable">
+<a id="src/interfaces/Drawable.ts.Drawable" xlink:href="src/interfaces/Drawable.ts"><text x="160.5" y="13.5" stroke="none" text-anchor="middle" data-name="Drawable">Drawable</text></a>
+
+</g>
+</g>
+<g transform="translate(2327.5, 1226.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Drawable">
+<g transform="translate(8, 8)" fill="#33322E" data-name="Drawable">
+
+</g>
+</g>
+<g transform="translate(2327.5, 1234.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Drawable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Drawable">
+<text x="0.0" y="13.5" stroke="none" data-name="Drawable">+abstract draw(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Drawable">+abstract hasPoint(): boolean</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Drawable">+abstract getCenter(): Point</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Drawable">+abstract move(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Drawable">+abstract getBoundingBox(): { x: number</text>
+<text x="0.0" y="88.5" stroke="none" data-name="Drawable">y: number</text>
+<text x="0.0" y="103.5" stroke="none" data-name="Drawable">width: number</text>
+<text x="0.0" y="118.5" stroke="none" data-name="Drawable">height: number</text>
+<text x="0.0" y="133.5" stroke="none" data-name="Drawable">}</text>
+
+</g>
+</g>
+</g>
+<g data-name="Point">
+<g fill="#eee8d5" stroke="#33322E" data-name="Point">
+<rect x="1710.3" y="2100.5" height="138.0" width="165.0" data-name="Point"></rect>
+<path d="M1710.3 2131.5 L1875.3 2131.5" fill="none" data-name="Point"></path>
+<path d="M1710.3 2177.5 L1875.3 2177.5" fill="none" data-name="Point"></path>
+</g>
+<g transform="translate(1710.25, 2100.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Point">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Point">
+<a id="src/primitives/Point.ts.Point" xlink:href="src/primitives/Point.ts"><text x="74.5" y="13.5" stroke="none" text-anchor="middle" data-name="Point">Point</text></a>
+
+</g>
+</g>
+<g transform="translate(1710.25, 2131.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Point">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Point">
+<text x="0.0" y="13.5" stroke="none" data-name="Point">+x: number</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Point">+y: number</text>
+
+</g>
+</g>
+<g transform="translate(1710.25, 2177.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Point">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Point">
+<text x="0.0" y="13.5" stroke="none" data-name="Point">+equals(): boolean</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Point">+toString(): string</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Point">+getCopy(): Point</text>
+
+</g>
+</g>
+</g>
+<g data-name="Movable">
+<g fill="lightblue" stroke="#33322E" data-name="Movable">
+<rect x="2015.8" y="890.0" height="70.0" width="124.0" data-name="Movable"></rect>
+<path d="M2015.8 921.0 L2139.8 921.0" fill="none" data-name="Movable"></path>
+<path d="M2015.8 929.0 L2139.8 929.0" fill="none" data-name="Movable"></path>
+</g>
+<g transform="translate(2015.75, 890)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Movable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Movable">
+<a id="src/interfaces/Movable.ts.Movable" xlink:href="src/interfaces/Movable.ts"><text x="54.0" y="13.5" stroke="none" text-anchor="middle" data-name="Movable">Movable</text></a>
+
+</g>
+</g>
+<g transform="translate(2015.75, 921)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Movable">
+<g transform="translate(8, 8)" fill="#33322E" data-name="Movable">
+
+</g>
+</g>
+<g transform="translate(2015.75, 929)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Movable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Movable">
+<text x="0.0" y="13.5" stroke="none" data-name="Movable">+move(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="Linkable">
+<g fill="lightblue" stroke="#33322E" data-name="Linkable">
+<rect x="214.0" y="1478.5" height="85.0" width="210.0" data-name="Linkable"></rect>
+<path d="M214.0 1509.5 L424.0 1509.5" fill="none" data-name="Linkable"></path>
+<path d="M214.0 1517.5 L424.0 1517.5" fill="none" data-name="Linkable"></path>
+</g>
+<g transform="translate(214, 1478.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Linkable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Linkable">
+<a id="src/interfaces/Linkable.ts.Linkable" xlink:href="src/interfaces/Linkable.ts"><text x="97.0" y="13.5" stroke="none" text-anchor="middle" data-name="Linkable">Linkable</text></a>
+
+</g>
+</g>
+<g transform="translate(214, 1509.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Linkable">
+<g transform="translate(8, 8)" fill="#33322E" data-name="Linkable">
+
+</g>
+</g>
+<g transform="translate(214, 1517.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Linkable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Linkable">
+<text x="0.0" y="13.5" stroke="none" data-name="Linkable">+linkTo(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Linkable">+getLinkingPoint(): Point</text>
+
+</g>
+</g>
+</g>
+<g data-name="Rotatable">
+<g fill="lightblue" stroke="#33322E" data-name="Rotatable">
+<rect x="4521.5" y="1776.5" height="70.0" width="127.0" data-name="Rotatable"></rect>
+<path d="M4521.5 1807.5 L4648.5 1807.5" fill="none" data-name="Rotatable"></path>
+<path d="M4521.5 1815.5 L4648.5 1815.5" fill="none" data-name="Rotatable"></path>
+</g>
+<g transform="translate(4521.5, 1776.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Rotatable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Rotatable">
+<a id="src/interfaces/Rotatable.ts.Rotatable" xlink:href="src/interfaces/Rotatable.ts"><text x="55.5" y="13.5" stroke="none" text-anchor="middle" data-name="Rotatable">Rotatable</text></a>
+
+</g>
+</g>
+<g transform="translate(4521.5, 1807.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Rotatable">
+<g transform="translate(8, 8)" fill="#33322E" data-name="Rotatable">
+
+</g>
+</g>
+<g transform="translate(4521.5, 1815.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Rotatable">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Rotatable">
+<text x="0.0" y="13.5" stroke="none" data-name="Rotatable">+rotate(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="BoardTool">
+<g fill="#eee8d5" stroke="#33322E" data-name="BoardTool">
+<rect x="2120.5" y="513.0" height="153.0" width="308.0" data-name="BoardTool"></rect>
+<path d="M2120.5 544.0 L2428.5 544.0" fill="none" data-name="BoardTool"></path>
+<path d="M2120.5 575.0 L2428.5 575.0" fill="none" data-name="BoardTool"></path>
+</g>
+<g transform="translate(2120.5, 513)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="BoardTool">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="BoardTool">
+<a id="src/model/BoardTool.ts.BoardTool" xlink:href="src/model/BoardTool.ts"><text x="146.0" y="13.5" stroke="none" text-anchor="middle" data-name="BoardTool">BoardTool</text></a>
+
+</g>
+</g>
+<g transform="translate(2120.5, 544)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="BoardTool">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="BoardTool">
+<text x="0.0" y="13.5" stroke="none" data-name="BoardTool">#whiteboardState: WhiteboardState</text>
+
+</g>
+</g>
+<g transform="translate(2120.5, 575)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="BoardTool">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="BoardTool">
+<text x="0.0" y="13.5" stroke="none" data-name="BoardTool">+abstract onLeftMouseDown(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="BoardTool">+abstract onLeftMouseUp(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="BoardTool">+abstract onRightMouseDown(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="BoardTool">+abstract onRightMouseUp(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="BoardTool">+abstract onMouseMove(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="WhiteboardState">
+<g fill="#eee8d5" stroke="#33322E" data-name="WhiteboardState">
+<rect x="2636.5" y="706.0" height="438.0" width="352.0" data-name="WhiteboardState"></rect>
+<path d="M2636.5 737.0 L2988.5 737.0" fill="none" data-name="WhiteboardState"></path>
+<path d="M2636.5 903.0 L2988.5 903.0" fill="none" data-name="WhiteboardState"></path>
+</g>
+<g transform="translate(2636.5, 706)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="WhiteboardState">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="WhiteboardState">
+<a id="src/model/WhiteboardState.ts.WhiteboardState" xlink:href="src/model/WhiteboardState.ts"><text x="168.0" y="13.5" stroke="none" text-anchor="middle" data-name="WhiteboardState">WhiteboardState</text></a>
+
+</g>
+</g>
+<g transform="translate(2636.5, 737)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="WhiteboardState">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="WhiteboardState">
+<text x="0.0" y="13.5" stroke="none" data-name="WhiteboardState">-canvas: HTMLCanvasElement</text>
+<text x="0.0" y="28.5" stroke="none" data-name="WhiteboardState">-ctx: CanvasRenderingContext2D</text>
+<text x="0.0" y="43.5" stroke="none" data-name="WhiteboardState">-eventManager: EventManager</text>
+<text x="0.0" y="58.5" stroke="none" data-name="WhiteboardState">-currentStroke: Stroke</text>
+<text x="0.0" y="73.5" stroke="none" data-name="WhiteboardState">-drawingHistory: Drawable[]</text>
+<text x="0.0" y="88.5" stroke="none" data-name="WhiteboardState">-redoHistory: Drawable[]</text>
+<text x="0.0" y="103.5" stroke="none" data-name="WhiteboardState">-stateHistory: Drawable[][]</text>
+<text x="0.0" y="118.5" stroke="none" data-name="WhiteboardState">-middlewareManager: MiddlewareManager</text>
+<text x="0.0" y="133.5" stroke="none" data-name="WhiteboardState">+redo: () =&gt; void</text>
+<text x="0.0" y="148.5" stroke="none" data-name="WhiteboardState">+clear: () =&gt; void</text>
+
+</g>
+</g>
+<g transform="translate(2636.5, 903)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="WhiteboardState">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="WhiteboardState">
+<text x="0.0" y="13.5" stroke="none" data-name="WhiteboardState">-_drawBoundingBox(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="WhiteboardState">-registerKeybinds(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="WhiteboardState">-saveState(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="WhiteboardState">-restoreState(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="WhiteboardState">+redrawCanvas(): void</text>
+<text x="0.0" y="88.5" stroke="none" data-name="WhiteboardState">+clearAtPoint(): void</text>
+<text x="0.0" y="103.5" stroke="none" data-name="WhiteboardState">+clearCurrentStroke(): void</text>
+<text x="0.0" y="118.5" stroke="none" data-name="WhiteboardState">+addDrawable(): void</text>
+<text x="0.0" y="133.5" stroke="none" data-name="WhiteboardState">+startStroke(): void</text>
+<text x="0.0" y="148.5" stroke="none" data-name="WhiteboardState">+addPointToCurrentStroke(): void</text>
+<text x="0.0" y="163.5" stroke="none" data-name="WhiteboardState">+endCurrentStroke(): Promise&lt;void&gt;</text>
+<text x="0.0" y="178.5" stroke="none" data-name="WhiteboardState">+undo(): void</text>
+<text x="0.0" y="193.5" stroke="none" data-name="WhiteboardState">+getDrawingHistory(): Drawable[]</text>
+<text x="0.0" y="208.5" stroke="none" data-name="WhiteboardState">+getCurrentStroke(): Stroke</text>
+<text x="0.0" y="223.5" stroke="none" data-name="WhiteboardState">+getCtx(): CanvasRenderingContext2D</text>
+
+</g>
+</g>
+</g>
+<g data-name="EventManager">
+<g fill="#eee8d5" stroke="#33322E" data-name="EventManager">
+<rect x="344.5" y="1184.0" height="213.0" width="574.0" data-name="EventManager"></rect>
+<path d="M344.5 1215.0 L918.5 1215.0" fill="none" data-name="EventManager"></path>
+<path d="M344.5 1276.0 L918.5 1276.0" fill="none" data-name="EventManager"></path>
+</g>
+<g transform="translate(344.5, 1184)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="EventManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="EventManager">
+<a id="src/model/EventManager.ts.EventManager" xlink:href="src/model/EventManager.ts"><text x="279.0" y="13.5" stroke="none" text-anchor="middle" data-name="EventManager">EventManager</text></a>
+
+</g>
+</g>
+<g transform="translate(344.5, 1215)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="EventManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="EventManager">
+<text x="0.0" y="13.5" stroke="none" data-name="EventManager">-canvas: HTMLCanvasElement</text>
+<text x="0.0" y="28.5" stroke="none" data-name="EventManager">-mouseEventListeners: Map&lt;MouseEventType, MouseEventHandler[]&gt;</text>
+<text x="0.0" y="43.5" stroke="none" data-name="EventManager">-keybindManager: KeybindManager</text>
+
+</g>
+</g>
+<g transform="translate(344.5, 1276)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="EventManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="EventManager">
+<text x="0.0" y="13.5" stroke="none" data-name="EventManager">-addCanvasMouseListener(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="EventManager">+registerMouseEvent(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="EventManager">+unregisterMouseEvent(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="EventManager">+triggerMouseEvent(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="EventManager">+addKeybind(): void</text>
+<text x="0.0" y="88.5" stroke="none" data-name="EventManager">+removeKeybind(): void</text>
+<text x="0.0" y="103.5" stroke="none" data-name="EventManager">+clearListeners(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="KeybindManager">
+<g fill="#eee8d5" stroke="#33322E" data-name="KeybindManager">
+<rect x="464.0" y="1437.0" height="168.0" width="335.0" data-name="KeybindManager"></rect>
+<path d="M464.0 1468.0 L799.0 1468.0" fill="none" data-name="KeybindManager"></path>
+<path d="M464.0 1499.0 L799.0 1499.0" fill="none" data-name="KeybindManager"></path>
+</g>
+<g transform="translate(464, 1437)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="KeybindManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="KeybindManager">
+<a id="src/model/KeybindManager.ts.KeybindManager" xlink:href="src/model/KeybindManager.ts"><text x="159.5" y="13.5" stroke="none" text-anchor="middle" data-name="KeybindManager">KeybindManager</text></a>
+
+</g>
+</g>
+<g transform="translate(464, 1468)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="KeybindManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="KeybindManager">
+<text x="0.0" y="13.5" stroke="none" data-name="KeybindManager">-keybindActions: Map&lt;string, () =&gt; void&gt;</text>
+
+</g>
+</g>
+<g transform="translate(464, 1499)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="KeybindManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="KeybindManager">
+<text x="0.0" y="13.5" stroke="none" data-name="KeybindManager">-registerKeybindListeners(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="KeybindManager">-handleKeyDown(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="KeybindManager">-getKeySignature(): string</text>
+<text x="0.0" y="58.5" stroke="none" data-name="KeybindManager">+addKeybind(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="KeybindManager">+removeKeybind(): void</text>
+<text x="0.0" y="88.5" stroke="none" data-name="KeybindManager">+removeKeybindListeners(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="Middleware">
+<g fill="#eee8d5" stroke="#33322E" data-name="Middleware">
+<rect x="1101.5" y="543.0" height="93.0" width="308.0" data-name="Middleware"></rect>
+<path d="M1101.5 574.0 L1409.5 574.0" fill="none" data-name="Middleware"></path>
+<path d="M1101.5 605.0 L1409.5 605.0" fill="none" data-name="Middleware"></path>
+</g>
+<g transform="translate(1101.5, 543)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Middleware">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Middleware">
+<a id="src/model/Middleware.ts.Middleware" xlink:href="src/model/Middleware.ts"><text x="146.0" y="13.5" stroke="none" text-anchor="middle" data-name="Middleware">Middleware</text></a>
+
+</g>
+</g>
+<g transform="translate(1101.5, 574)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Middleware">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Middleware">
+<text x="0.0" y="13.5" stroke="none" data-name="Middleware">#whiteboardState: WhiteboardState</text>
+
+</g>
+</g>
+<g transform="translate(1101.5, 605)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Middleware">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Middleware">
+<text x="0.0" y="13.5" stroke="none" data-name="Middleware">+abstract apply(): Promise&lt;boolean&gt;</text>
+
+</g>
+</g>
+</g>
+<g data-name="MiddlewareManager">
+<g fill="#eee8d5" stroke="#33322E" data-name="MiddlewareManager">
+<rect x="2338.0" y="305.0" height="123.0" width="307.0" data-name="MiddlewareManager"></rect>
+<path d="M2338.0 336.0 L2645.0 336.0" fill="none" data-name="MiddlewareManager"></path>
+<path d="M2338.0 382.0 L2645.0 382.0" fill="none" data-name="MiddlewareManager"></path>
+</g>
+<g transform="translate(2338, 305)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="MiddlewareManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="MiddlewareManager">
+<a id="src/model/MiddlewareManager.ts.MiddlewareManager" xlink:href="src/model/MiddlewareManager.ts"><text x="145.5" y="13.5" stroke="none" text-anchor="middle" data-name="MiddlewareManager">MiddlewareManager</text></a>
+
+</g>
+</g>
+<g transform="translate(2338, 336)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="MiddlewareManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="MiddlewareManager">
+<text x="0.0" y="13.5" stroke="none" data-name="MiddlewareManager">-whiteboardState: WhiteboardState</text>
+<text x="0.0" y="28.5" stroke="none" data-name="MiddlewareManager">-middlewares: Middleware[]</text>
+
+</g>
+</g>
+<g transform="translate(2338, 382)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="MiddlewareManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="MiddlewareManager">
+<text x="0.0" y="13.5" stroke="none" data-name="MiddlewareManager">+initializeMiddlewares(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="MiddlewareManager">+applyMiddlewares(): Promise&lt;void&gt;</text>
+
+</g>
+</g>
+</g>
+<g data-name="ToolSelector">
+<g fill="#eee8d5" stroke="#33322E" data-name="ToolSelector">
+<rect x="2006.0" y="260.0" height="213.0" width="292.0" data-name="ToolSelector"></rect>
+<path d="M2006.0 291.0 L2298.0 291.0" fill="none" data-name="ToolSelector"></path>
+<path d="M2006.0 367.0 L2298.0 367.0" fill="none" data-name="ToolSelector"></path>
+</g>
+<g transform="translate(2006, 260)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="ToolSelector">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="ToolSelector">
+<a id="src/model/ToolSelector.ts.ToolSelector" xlink:href="src/model/ToolSelector.ts"><text x="138.0" y="13.5" stroke="none" text-anchor="middle" data-name="ToolSelector">ToolSelector</text></a>
+
+</g>
+</g>
+<g transform="translate(2006, 291)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ToolSelector">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ToolSelector">
+<text x="0.0" y="13.5" stroke="none" data-name="ToolSelector">-tools: BoardTool[]</text>
+<text x="0.0" y="28.5" stroke="none" data-name="ToolSelector">-currentTool: number</text>
+<text x="0.0" y="43.5" stroke="none" data-name="ToolSelector">-whiteboardState: WhiteboardState</text>
+<text x="0.0" y="58.5" stroke="none" data-name="ToolSelector">-eventManager: EventManager</text>
+
+</g>
+</g>
+<g transform="translate(2006, 367)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ToolSelector">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ToolSelector">
+<text x="0.0" y="13.5" stroke="none" data-name="ToolSelector">+switchTool(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="ToolSelector">+initializeTools(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="ToolSelector">+registerKeybinds(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="ToolSelector">+registerEventListeners(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="ToolSelector">+getCurrentTool(): BoardTool</text>
+<text x="0.0" y="88.5" stroke="none" data-name="ToolSelector">+getCurrentToolIndex(): number</text>
+
+</g>
+</g>
+</g>
+<g data-name="ToolKeybinds">
+<g fill="lightgreen" stroke="#33322E" data-name="ToolKeybinds">
+<rect x="1720.3" y="56.5" height="107.0" width="189.0" data-name="ToolKeybinds"></rect>
+<path d="M1720.3 87.5 L1909.3 87.5" fill="none" data-name="ToolKeybinds"></path>
+</g>
+<g transform="translate(1720.25, 56.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ToolKeybinds">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="ToolKeybinds">
+<a id="src/model/ToolSelector.ts.ToolKeybinds" xlink:href="src/model/ToolSelector.ts"><text x="86.5" y="13.5" stroke="none" text-anchor="middle" data-name="ToolKeybinds">ToolKeybinds</text></a>
+
+</g>
+</g>
+<g transform="translate(1720.25, 87.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ToolKeybinds">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ToolKeybinds">
+<text x="0.0" y="13.5" stroke="none" data-name="ToolKeybinds">KEYBIND_PEN</text>
+<text x="0.0" y="28.5" stroke="none" data-name="ToolKeybinds">KEYBIND_ERASER</text>
+<text x="0.0" y="43.5" stroke="none" data-name="ToolKeybinds">KEYBIND_SELECTOR</text>
+<text x="0.0" y="58.5" stroke="none" data-name="ToolKeybinds">KEYBIND_TEXT</text>
+
+</g>
+</g>
+</g>
+<g data-name="ToolIndices">
+<g fill="lightgreen" stroke="#33322E" data-name="ToolIndices">
+<rect x="1949.3" y="56.5" height="107.0" width="167.0" data-name="ToolIndices"></rect>
+<path d="M1949.3 87.5 L2116.3 87.5" fill="none" data-name="ToolIndices"></path>
+</g>
+<g transform="translate(1949.25, 56.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ToolIndices">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="ToolIndices">
+<a id="src/model/ToolSelector.ts.ToolIndices" xlink:href="src/model/ToolSelector.ts"><text x="75.5" y="13.5" stroke="none" text-anchor="middle" data-name="ToolIndices">ToolIndices</text></a>
+
+</g>
+</g>
+<g transform="translate(1949.25, 87.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ToolIndices">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ToolIndices">
+<text x="0.0" y="13.5" stroke="none" data-name="ToolIndices">INDEX_PEN</text>
+<text x="0.0" y="28.5" stroke="none" data-name="ToolIndices">INDEX_ERASER</text>
+<text x="0.0" y="43.5" stroke="none" data-name="ToolIndices">INDEX_SELECTOR</text>
+<text x="0.0" y="58.5" stroke="none" data-name="ToolIndices">INDEX_TEXT</text>
+
+</g>
+</g>
+</g>
+<g data-name="WhiteboardMaster">
+<g fill="#eee8d5" stroke="#33322E" data-name="WhiteboardMaster">
+<rect x="2156.3" y="26.0" height="168.0" width="271.0" data-name="WhiteboardMaster"></rect>
+<path d="M2156.3 57.0 L2427.3 57.0" fill="none" data-name="WhiteboardMaster"></path>
+<path d="M2156.3 133.0 L2427.3 133.0" fill="none" data-name="WhiteboardMaster"></path>
+</g>
+<g transform="translate(2156.25, 26)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="WhiteboardMaster">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="WhiteboardMaster">
+<a id="src/model/WhiteboardMaster.ts.WhiteboardMaster" xlink:href="src/model/WhiteboardMaster.ts"><text x="127.5" y="13.5" stroke="none" text-anchor="middle" data-name="WhiteboardMaster">WhiteboardMaster</text></a>
+
+</g>
+</g>
+<g transform="translate(2156.25, 57)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="WhiteboardMaster">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="WhiteboardMaster">
+<text x="0.0" y="13.5" stroke="none" data-name="WhiteboardMaster">-canvas: HTMLCanvasElement</text>
+<text x="0.0" y="28.5" stroke="none" data-name="WhiteboardMaster">-state: WhiteboardState</text>
+<text x="0.0" y="43.5" stroke="none" data-name="WhiteboardMaster">-eventManager: EventManager</text>
+<text x="0.0" y="58.5" stroke="none" data-name="WhiteboardMaster">-toolSelector: ToolSelector</text>
+
+</g>
+</g>
+<g transform="translate(2156.25, 133)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="WhiteboardMaster">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="WhiteboardMaster">
+<text x="0.0" y="13.5" stroke="none" data-name="WhiteboardMaster">+clearListeners(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="WhiteboardMaster">+getToolSelector(): ToolSelector</text>
+<text x="0.0" y="43.5" stroke="none" data-name="WhiteboardMaster">+getState(): WhiteboardState</text>
+
+</g>
+</g>
+</g>
+<g data-name="Stroke">
+<g fill="#eee8d5" stroke="#33322E" data-name="Stroke">
+<rect x="2227.0" y="1660.0" height="303.0" width="268.0" data-name="Stroke"></rect>
+<path d="M2227.0 1691.0 L2495.0 1691.0" fill="none" data-name="Stroke"></path>
+<path d="M2227.0 1722.0 L2495.0 1722.0" fill="none" data-name="Stroke"></path>
+</g>
+<g transform="translate(2227, 1660)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Stroke">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Stroke">
+<a id="src/primitives/Stroke.ts.Stroke" xlink:href="src/primitives/Stroke.ts"><text x="126.0" y="13.5" stroke="none" text-anchor="middle" data-name="Stroke">Stroke</text></a>
+
+</g>
+</g>
+<g transform="translate(2227, 1691)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Stroke">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Stroke">
+<text x="0.0" y="13.5" stroke="none" data-name="Stroke">-points: Point[]</text>
+
+</g>
+</g>
+<g transform="translate(2227, 1722)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Stroke">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Stroke">
+<text x="0.0" y="13.5" stroke="none" data-name="Stroke">+addPoint(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Stroke">+draw(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Stroke">+hasPoint(): boolean</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Stroke">+getBoundingBox(): { x: number</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Stroke">y: number</text>
+<text x="0.0" y="88.5" stroke="none" data-name="Stroke">width: number</text>
+<text x="0.0" y="103.5" stroke="none" data-name="Stroke">height: number</text>
+<text x="0.0" y="118.5" stroke="none" data-name="Stroke">}</text>
+<text x="0.0" y="133.5" stroke="none" data-name="Stroke">+getPoints(): Point[]</text>
+<text x="0.0" y="148.5" stroke="none" data-name="Stroke">+setPoints(): void</text>
+<text x="0.0" y="163.5" stroke="none" data-name="Stroke">+removePoint(): void</text>
+<text x="0.0" y="178.5" stroke="none" data-name="Stroke">+linkTo(): void</text>
+<text x="0.0" y="193.5" stroke="none" data-name="Stroke">+getLinkingPoint(): Point</text>
+<text x="0.0" y="208.5" stroke="none" data-name="Stroke">+getCenter(): Point</text>
+<text x="0.0" y="223.5" stroke="none" data-name="Stroke">+move(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="Arrow">
+<g fill="#eee8d5" stroke="#33322E" data-name="Arrow">
+<rect x="0.0" y="1645.0" height="333.0" width="268.0" data-name="Arrow"></rect>
+<path d="M0.0 1676.0 L268.0 1676.0" fill="none" data-name="Arrow"></path>
+<path d="M0.0 1722.0 L268.0 1722.0" fill="none" data-name="Arrow"></path>
+</g>
+<g transform="translate(0, 1645)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Arrow">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Arrow">
+<a id="src/primitives/Arrow.ts.Arrow" xlink:href="src/primitives/Arrow.ts"><text x="126.0" y="13.5" stroke="none" text-anchor="middle" data-name="Arrow">Arrow</text></a>
+
+</g>
+</g>
+<g transform="translate(0, 1676)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Arrow">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Arrow">
+<text x="0.0" y="13.5" stroke="none" data-name="Arrow">-startPoint: Point</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Arrow">-endPoint: Point</text>
+
+</g>
+</g>
+<g transform="translate(0, 1722)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Arrow">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Arrow">
+<text x="0.0" y="13.5" stroke="none" data-name="Arrow">+setStartPoint(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Arrow">+setEndPoint(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Arrow">+getStartPoint(): Point</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Arrow">+getEndPoint(): Point</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Arrow">+draw(): void</text>
+<text x="0.0" y="88.5" stroke="none" data-name="Arrow">-drawArrowhead(): void</text>
+<text x="0.0" y="103.5" stroke="none" data-name="Arrow">+getBoundingBox(): { x: number</text>
+<text x="0.0" y="118.5" stroke="none" data-name="Arrow">y: number</text>
+<text x="0.0" y="133.5" stroke="none" data-name="Arrow">width: number</text>
+<text x="0.0" y="148.5" stroke="none" data-name="Arrow">height: number</text>
+<text x="0.0" y="163.5" stroke="none" data-name="Arrow">}</text>
+<text x="0.0" y="178.5" stroke="none" data-name="Arrow">+move(): void</text>
+<text x="0.0" y="193.5" stroke="none" data-name="Arrow">+getCenter(): Point</text>
+<text x="0.0" y="208.5" stroke="none" data-name="Arrow">+linkTo(): void</text>
+<text x="0.0" y="223.5" stroke="none" data-name="Arrow">+getLinkingPoint(): Point</text>
+<text x="0.0" y="238.5" stroke="none" data-name="Arrow">+hasPoint(): boolean</text>
+
+</g>
+</g>
+</g>
+<g data-name="Circle">
+<g fill="#eee8d5" stroke="#33322E" data-name="Circle">
+<rect x="3855.0" y="2048.0" height="243.0" width="268.0" data-name="Circle"></rect>
+<path d="M3855.0 2079.0 L4123.0 2079.0" fill="none" data-name="Circle"></path>
+<path d="M3855.0 2110.0 L4123.0 2110.0" fill="none" data-name="Circle"></path>
+</g>
+<g transform="translate(3855, 2048)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Circle">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Circle">
+<a id="src/primitives/Circle.ts.Circle" xlink:href="src/primitives/Circle.ts"><text x="126.0" y="13.5" stroke="none" text-anchor="middle" data-name="Circle">Circle</text></a>
+
+</g>
+</g>
+<g transform="translate(3855, 2079)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Circle">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Circle">
+<text x="0.0" y="13.5" stroke="none" data-name="Circle">+radius: number</text>
+
+</g>
+</g>
+<g transform="translate(3855, 2110)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Circle">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Circle">
+<text x="0.0" y="13.5" stroke="none" data-name="Circle">+static buildShape(): Shape</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Circle">+setupAnchors(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Circle">+draw(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Circle">+hasPoint(): boolean</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Circle">+getCenter(): Point</text>
+<text x="0.0" y="88.5" stroke="none" data-name="Circle">+getBoundingBox(): { x: number</text>
+<text x="0.0" y="103.5" stroke="none" data-name="Circle">y: number</text>
+<text x="0.0" y="118.5" stroke="none" data-name="Circle">width: number</text>
+<text x="0.0" y="133.5" stroke="none" data-name="Circle">height: number</text>
+<text x="0.0" y="148.5" stroke="none" data-name="Circle">}</text>
+<text x="0.0" y="163.5" stroke="none" data-name="Circle">+toString(): string</text>
+
+</g>
+</g>
+</g>
+<g data-name="Shape">
+<g fill="#eee8d5" stroke="#33322E" data-name="Shape">
+<rect x="3463.8" y="1645.0" height="333.0" width="337.0" data-name="Shape"></rect>
+<path d="M3463.8 1676.0 L3800.8 1676.0" fill="none" data-name="Shape"></path>
+<path d="M3463.8 1752.0 L3800.8 1752.0" fill="none" data-name="Shape"></path>
+</g>
+<g transform="translate(3463.75, 1645)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Shape">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Shape">
+<a id="src/primitives/Shape.ts.Shape" xlink:href="src/primitives/Shape.ts"><text x="160.5" y="13.5" stroke="none" text-anchor="middle" data-name="Shape">Shape</text></a>
+
+</g>
+</g>
+<g transform="translate(3463.75, 1676)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Shape">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Shape">
+<text x="0.0" y="13.5" stroke="none" data-name="Shape">+anchors: Point[]</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Shape">+static count: number</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Shape">#id: number</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Shape">+startPoint: Point</text>
+
+</g>
+</g>
+<g transform="translate(3463.75, 1752)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Shape">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Shape">
+<text x="0.0" y="13.5" stroke="none" data-name="Shape">+abstract toString(): string</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Shape">+abstract draw(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Shape">+abstract hasPoint(): boolean</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Shape">+abstract getCenter(): Point</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Shape">+abstract getBoundingBox(): { x: number</text>
+<text x="0.0" y="88.5" stroke="none" data-name="Shape">y: number</text>
+<text x="0.0" y="103.5" stroke="none" data-name="Shape">width: number</text>
+<text x="0.0" y="118.5" stroke="none" data-name="Shape">height: number</text>
+<text x="0.0" y="133.5" stroke="none" data-name="Shape">}</text>
+<text x="0.0" y="148.5" stroke="none" data-name="Shape">+abstract setupAnchors(): void</text>
+<text x="0.0" y="163.5" stroke="none" data-name="Shape">#drawAnchors(): void</text>
+<text x="0.0" y="178.5" stroke="none" data-name="Shape">+getAnchors(): Point[]</text>
+<text x="0.0" y="193.5" stroke="none" data-name="Shape">+move(): void</text>
+<text x="0.0" y="208.5" stroke="none" data-name="Shape">+equals(): boolean</text>
+
+</g>
+</g>
+</g>
+<g data-name="Rectangle">
+<g fill="#eee8d5" stroke="#33322E" data-name="Rectangle">
+<rect x="4163.0" y="2018.0" height="303.0" width="268.0" data-name="Rectangle"></rect>
+<path d="M4163.0 2049.0 L4431.0 2049.0" fill="none" data-name="Rectangle"></path>
+<path d="M4163.0 2110.0 L4431.0 2110.0" fill="none" data-name="Rectangle"></path>
+</g>
+<g transform="translate(4163, 2018)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Rectangle">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Rectangle">
+<a id="src/primitives/Rectangle.ts.Rectangle" xlink:href="src/primitives/Rectangle.ts"><text x="126.0" y="13.5" stroke="none" text-anchor="middle" data-name="Rectangle">Rectangle</text></a>
+
+</g>
+</g>
+<g transform="translate(4163, 2049)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Rectangle">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Rectangle">
+<text x="0.0" y="13.5" stroke="none" data-name="Rectangle">-points: Point[]</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Rectangle">+width: number</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Rectangle">+height: number</text>
+
+</g>
+</g>
+<g transform="translate(4163, 2110)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Rectangle">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Rectangle">
+<text x="0.0" y="13.5" stroke="none" data-name="Rectangle">+static buildShape(): Shape</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Rectangle">+draw(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Rectangle">+setupAnchors(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Rectangle">+hasPoint(): boolean</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Rectangle">+move(): void</text>
+<text x="0.0" y="88.5" stroke="none" data-name="Rectangle">+rotate(): void</text>
+<text x="0.0" y="103.5" stroke="none" data-name="Rectangle">+getCenter(): Point</text>
+<text x="0.0" y="118.5" stroke="none" data-name="Rectangle">+getBoundingBox(): { x: number</text>
+<text x="0.0" y="133.5" stroke="none" data-name="Rectangle">y: number</text>
+<text x="0.0" y="148.5" stroke="none" data-name="Rectangle">width: number</text>
+<text x="0.0" y="163.5" stroke="none" data-name="Rectangle">height: number</text>
+<text x="0.0" y="178.5" stroke="none" data-name="Rectangle">}</text>
+<text x="0.0" y="193.5" stroke="none" data-name="Rectangle">+toString(): string</text>
+
+</g>
+</g>
+</g>
+<g data-name="Segment">
+<g fill="#eee8d5" stroke="#33322E" data-name="Segment">
+<rect x="1406.0" y="1735.0" height="153.0" width="188.0" data-name="Segment"></rect>
+<path d="M1406.0 1766.0 L1594.0 1766.0" fill="none" data-name="Segment"></path>
+<path d="M1406.0 1812.0 L1594.0 1812.0" fill="none" data-name="Segment"></path>
+</g>
+<g transform="translate(1406, 1735)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Segment">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Segment">
+<a id="src/primitives/Segment.ts.Segment" xlink:href="src/primitives/Segment.ts"><text x="86.0" y="13.5" stroke="none" text-anchor="middle" data-name="Segment">Segment</text></a>
+
+</g>
+</g>
+<g transform="translate(1406, 1766)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Segment">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Segment">
+<text x="0.0" y="13.5" stroke="none" data-name="Segment">-start: Point</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Segment">-end: Point</text>
+
+</g>
+</g>
+<g transform="translate(1406, 1812)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Segment">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Segment">
+<text x="0.0" y="13.5" stroke="none" data-name="Segment">+getStart(): Point</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Segment">+getEnd(): Point</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Segment">+getLength(): number</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Segment">+hasPoint(): boolean</text>
+
+</g>
+</g>
+</g>
+<g data-name="Triangle">
+<g fill="#eee8d5" stroke="#33322E" data-name="Triangle">
+<rect x="4471.0" y="2033.0" height="273.0" width="268.0" data-name="Triangle"></rect>
+<path d="M4471.0 2064.0 L4739.0 2064.0" fill="none" data-name="Triangle"></path>
+<path d="M4471.0 2095.0 L4739.0 2095.0" fill="none" data-name="Triangle"></path>
+</g>
+<g transform="translate(4471, 2033)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Triangle">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Triangle">
+<a id="src/primitives/Triangle.ts.Triangle" xlink:href="src/primitives/Triangle.ts"><text x="126.0" y="13.5" stroke="none" text-anchor="middle" data-name="Triangle">Triangle</text></a>
+
+</g>
+</g>
+<g transform="translate(4471, 2064)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Triangle">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Triangle">
+<text x="0.0" y="13.5" stroke="none" data-name="Triangle">+points: Point[]</text>
+
+</g>
+</g>
+<g transform="translate(4471, 2095)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Triangle">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Triangle">
+<text x="0.0" y="13.5" stroke="none" data-name="Triangle">+static buildShape(): Shape</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Triangle">+draw(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Triangle">+setupAnchors(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Triangle">+hasPoint(): boolean</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Triangle">+move(): void</text>
+<text x="0.0" y="88.5" stroke="none" data-name="Triangle">+getCenter(): Point</text>
+<text x="0.0" y="103.5" stroke="none" data-name="Triangle">+getBoundingBox(): { x: number</text>
+<text x="0.0" y="118.5" stroke="none" data-name="Triangle">y: number</text>
+<text x="0.0" y="133.5" stroke="none" data-name="Triangle">width: number</text>
+<text x="0.0" y="148.5" stroke="none" data-name="Triangle">height: number</text>
+<text x="0.0" y="163.5" stroke="none" data-name="Triangle">}</text>
+<text x="0.0" y="178.5" stroke="none" data-name="Triangle">+toString(): string</text>
+<text x="0.0" y="193.5" stroke="none" data-name="Triangle">+rotate(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="WhiteboardText">
+<g fill="#eee8d5" stroke="#33322E" data-name="WhiteboardText">
+<rect x="2705.8" y="1682.5" height="258.0" width="268.0" data-name="WhiteboardText"></rect>
+<path d="M2705.8 1713.5 L2973.8 1713.5" fill="none" data-name="WhiteboardText"></path>
+<path d="M2705.8 1789.5 L2973.8 1789.5" fill="none" data-name="WhiteboardText"></path>
+</g>
+<g transform="translate(2705.75, 1682.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="WhiteboardText">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="WhiteboardText">
+<a id="src/primitives/WhiteboardText.ts.WhiteboardText" xlink:href="src/primitives/WhiteboardText.ts"><text x="126.0" y="13.5" stroke="none" text-anchor="middle" data-name="WhiteboardText">WhiteboardText</text></a>
+
+</g>
+</g>
+<g transform="translate(2705.75, 1713.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="WhiteboardText">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="WhiteboardText">
+<text x="0.0" y="13.5" stroke="none" data-name="WhiteboardText">-text: string</text>
+<text x="0.0" y="28.5" stroke="none" data-name="WhiteboardText">-position: Point</text>
+<text x="0.0" y="43.5" stroke="none" data-name="WhiteboardText">-font: string</text>
+<text x="0.0" y="58.5" stroke="none" data-name="WhiteboardText">-color: string</text>
+
+</g>
+</g>
+<g transform="translate(2705.75, 1789.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="WhiteboardText">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="WhiteboardText">
+<text x="0.0" y="13.5" stroke="none" data-name="WhiteboardText">+draw(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="WhiteboardText">+hasPoint(): boolean</text>
+<text x="0.0" y="43.5" stroke="none" data-name="WhiteboardText">+getCenter(): Point</text>
+<text x="0.0" y="58.5" stroke="none" data-name="WhiteboardText">+move(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="WhiteboardText">+getBoundingBox(): { x: number</text>
+<text x="0.0" y="88.5" stroke="none" data-name="WhiteboardText">y: number</text>
+<text x="0.0" y="103.5" stroke="none" data-name="WhiteboardText">width: number</text>
+<text x="0.0" y="118.5" stroke="none" data-name="WhiteboardText">height: number</text>
+<text x="0.0" y="133.5" stroke="none" data-name="WhiteboardText">}</text>
+
+</g>
+</g>
+</g>
+<g data-name="Vector2">
+<g fill="#eee8d5" stroke="#33322E" data-name="Vector2">
+<rect x="2467.3" y="67.5" height="85.0" width="105.0" data-name="Vector2"></rect>
+<path d="M2467.3 98.5 L2572.3 98.5" fill="none" data-name="Vector2"></path>
+<path d="M2467.3 144.5 L2572.3 144.5" fill="none" data-name="Vector2"></path>
+</g>
+<g transform="translate(2467.25, 67.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Vector2">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Vector2">
+<a id="src/util/maths.ts.Vector2" xlink:href="src/util/maths.ts"><text x="44.5" y="13.5" stroke="none" text-anchor="middle" data-name="Vector2">Vector2</text></a>
+
+</g>
+</g>
+<g transform="translate(2467.25, 98.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Vector2">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Vector2">
+<text x="0.0" y="13.5" stroke="none" data-name="Vector2">+x: number</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Vector2">+y: number</text>
+
+</g>
+</g>
+<g transform="translate(2467.25, 144.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Vector2">
+<g transform="translate(8, 8)" fill="#33322E" data-name="Vector2">
+
+</g>
+</g>
+</g>
+<g data-name="MathUtils">
+<g fill="#eee8d5" stroke="#33322E" data-name="MathUtils">
+<rect x="2612.3" y="67.5" height="85.0" width="271.0" data-name="MathUtils"></rect>
+<path d="M2612.3 98.5 L2883.3 98.5" fill="none" data-name="MathUtils"></path>
+<path d="M2612.3 106.5 L2883.3 106.5" fill="none" data-name="MathUtils"></path>
+</g>
+<g transform="translate(2612.25, 67.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="MathUtils">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="MathUtils">
+<a id="src/util/maths.ts.MathUtils" xlink:href="src/util/maths.ts"><text x="127.5" y="13.5" stroke="none" text-anchor="middle" data-name="MathUtils">MathUtils</text></a>
+
+</g>
+</g>
+<g transform="translate(2612.25, 98.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="MathUtils">
+<g transform="translate(8, 8)" fill="#33322E" data-name="MathUtils">
+
+</g>
+</g>
+<g transform="translate(2612.25, 106.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="MathUtils">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="MathUtils">
+<text x="0.0" y="13.5" stroke="none" data-name="MathUtils">+static distance(): number</text>
+<text x="0.0" y="28.5" stroke="none" data-name="MathUtils">+static calculateAngle(): number</text>
+
+</g>
+</g>
+</g>
+<g data-name="ShapeSizeRotationDetector">
+<g fill="#eee8d5" stroke="#33322E" data-name="ShapeSizeRotationDetector">
+<rect x="2923.3" y="0.0" height="220.0" width="837.0" data-name="ShapeSizeRotationDetector"></rect>
+<path d="M2923.3 31.0 L3760.3 31.0" fill="none" data-name="ShapeSizeRotationDetector"></path>
+<path d="M2923.3 39.0 L3760.3 39.0" fill="none" data-name="ShapeSizeRotationDetector"></path>
+</g>
+<g transform="translate(2923.25, 0)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="ShapeSizeRotationDetector">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="ShapeSizeRotationDetector">
+<a id="src/util/ShapeSizeRotationDetector.ts.ShapeSizeRotationDetector" xlink:href="src/util/ShapeSizeRotationDetector.ts"><text x="410.5" y="13.5" stroke="none" text-anchor="middle" data-name="ShapeSizeRotationDetector">ShapeSizeRotationDetector</text></a>
+
+</g>
+</g>
+<g transform="translate(2923.25, 31)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ShapeSizeRotationDetector">
+<g transform="translate(8, 8)" fill="#33322E" data-name="ShapeSizeRotationDetector">
+
+</g>
+</g>
+<g transform="translate(2923.25, 39)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ShapeSizeRotationDetector">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ShapeSizeRotationDetector">
+<text x="0.0" y="13.5" stroke="none" data-name="ShapeSizeRotationDetector">+static calculateCentroid(): Point</text>
+<text x="0.0" y="28.5" stroke="none" data-name="ShapeSizeRotationDetector">+static centerPoints(): Point[]</text>
+<text x="0.0" y="43.5" stroke="none" data-name="ShapeSizeRotationDetector">+static rotatePoints(): Point[]</text>
+<text x="0.0" y="58.5" stroke="none" data-name="ShapeSizeRotationDetector">+static calculateCovarianceMatrix(): [number, number, number]</text>
+<text x="0.0" y="73.5" stroke="none" data-name="ShapeSizeRotationDetector">+static calculateEigenvaluesAndEigenvectors(): [[number, number], [number, number], number, number]</text>
+<text x="0.0" y="88.5" stroke="none" data-name="ShapeSizeRotationDetector">+static calculateRotationAngle(): number</text>
+<text x="0.0" y="103.5" stroke="none" data-name="ShapeSizeRotationDetector">+static getBoundingBox(): BoundingBox</text>
+<text x="0.0" y="118.5" stroke="none" data-name="ShapeSizeRotationDetector">+static findSizeAndRotation(): ShapeSizeRotation</text>
+<text x="0.0" y="133.5" stroke="none" data-name="ShapeSizeRotationDetector">+static findAllDistances(): DistanceTuple[]</text>
+<text x="0.0" y="148.5" stroke="none" data-name="ShapeSizeRotationDetector">+static detectBestRectangle(): Rectangle</text>
+<text x="0.0" y="163.5" stroke="none" data-name="ShapeSizeRotationDetector">+static detectBestTriangle(): Triangle</text>
+
+</g>
+</g>
+</g>
+<g data-name="ShapeSizeRotation">
+<g fill="lightblue" stroke="#33322E" data-name="ShapeSizeRotation">
+<rect x="3013.8" y="1739.0" height="145.0" width="167.0" data-name="ShapeSizeRotation"></rect>
+<path d="M3013.8 1770.0 L3180.8 1770.0" fill="none" data-name="ShapeSizeRotation"></path>
+<path d="M3013.8 1876.0 L3180.8 1876.0" fill="none" data-name="ShapeSizeRotation"></path>
+</g>
+<g transform="translate(3013.75, 1739)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ShapeSizeRotation">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="ShapeSizeRotation">
+<a id="src/util/ShapeSizeRotationDetector.ts.ShapeSizeRotation" xlink:href="src/util/ShapeSizeRotationDetector.ts"><text x="75.5" y="13.5" stroke="none" text-anchor="middle" data-name="ShapeSizeRotation">ShapeSizeRotation</text></a>
+
+</g>
+</g>
+<g transform="translate(3013.75, 1770)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ShapeSizeRotation">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ShapeSizeRotation">
+<text x="0.0" y="13.5" stroke="none" data-name="ShapeSizeRotation">+angle: number</text>
+<text x="0.0" y="28.5" stroke="none" data-name="ShapeSizeRotation">+centroid: Point</text>
+<text x="0.0" y="43.5" stroke="none" data-name="ShapeSizeRotation">+minX: number</text>
+<text x="0.0" y="58.5" stroke="none" data-name="ShapeSizeRotation">+maxX: number</text>
+<text x="0.0" y="73.5" stroke="none" data-name="ShapeSizeRotation">+minY: number</text>
+<text x="0.0" y="88.5" stroke="none" data-name="ShapeSizeRotation">+maxY: number</text>
+
+</g>
+</g>
+<g transform="translate(3013.75, 1876)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ShapeSizeRotation">
+<g transform="translate(8, 8)" fill="#33322E" data-name="ShapeSizeRotation">
+
+</g>
+</g>
+</g>
+<g data-name="BoundingBox">
+<g fill="lightblue" stroke="#33322E" data-name="BoundingBox">
+<rect x="3800.3" y="52.5" height="115.0" width="140.0" data-name="BoundingBox"></rect>
+<path d="M3800.3 83.5 L3940.3 83.5" fill="none" data-name="BoundingBox"></path>
+<path d="M3800.3 159.5 L3940.3 159.5" fill="none" data-name="BoundingBox"></path>
+</g>
+<g transform="translate(3800.25, 52.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="BoundingBox">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="BoundingBox">
+<a id="src/util/ShapeSizeRotationDetector.ts.BoundingBox" xlink:href="src/util/ShapeSizeRotationDetector.ts"><text x="62.0" y="13.5" stroke="none" text-anchor="middle" data-name="BoundingBox">BoundingBox</text></a>
+
+</g>
+</g>
+<g transform="translate(3800.25, 83.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="BoundingBox">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="BoundingBox">
+<text x="0.0" y="13.5" stroke="none" data-name="BoundingBox">+minX: number</text>
+<text x="0.0" y="28.5" stroke="none" data-name="BoundingBox">+maxX: number</text>
+<text x="0.0" y="43.5" stroke="none" data-name="BoundingBox">+minY: number</text>
+<text x="0.0" y="58.5" stroke="none" data-name="BoundingBox">+maxY: number</text>
+
+</g>
+</g>
+<g transform="translate(3800.25, 159.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="BoundingBox">
+<g transform="translate(8, 8)" fill="#33322E" data-name="BoundingBox">
+
+</g>
+</g>
+</g>
+<g data-name="DistanceTuple">
+<g fill="lightblue" stroke="#33322E" data-name="DistanceTuple">
+<rect x="3220.8" y="1761.5" height="100.0" width="163.0" data-name="DistanceTuple"></rect>
+<path d="M3220.8 1792.5 L3383.8 1792.5" fill="none" data-name="DistanceTuple"></path>
+<path d="M3220.8 1853.5 L3383.8 1853.5" fill="none" data-name="DistanceTuple"></path>
+</g>
+<g transform="translate(3220.75, 1761.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="DistanceTuple">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="DistanceTuple">
+<a id="src/util/ShapeSizeRotationDetector.ts.DistanceTuple" xlink:href="src/util/ShapeSizeRotationDetector.ts"><text x="73.5" y="13.5" stroke="none" text-anchor="middle" data-name="DistanceTuple">DistanceTuple</text></a>
+
+</g>
+</g>
+<g transform="translate(3220.75, 1792.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="DistanceTuple">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="DistanceTuple">
+<text x="0.0" y="13.5" stroke="none" data-name="DistanceTuple">+point1: Point</text>
+<text x="0.0" y="28.5" stroke="none" data-name="DistanceTuple">+point2: Point</text>
+<text x="0.0" y="43.5" stroke="none" data-name="DistanceTuple">+distance: number</text>
+
+</g>
+</g>
+<g transform="translate(3220.75, 1853.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="DistanceTuple">
+<g transform="translate(8, 8)" fill="#33322E" data-name="DistanceTuple">
+
+</g>
+</g>
+</g>
+<g data-name="AnchoringManager">
+<g fill="#eee8d5" stroke="#33322E" data-name="AnchoringManager">
+<rect x="240.8" y="852.5" height="145.0" width="448.0" data-name="AnchoringManager"></rect>
+<path d="M240.8 883.5 L688.8 883.5" fill="none" data-name="AnchoringManager"></path>
+<path d="M240.8 891.5 L688.8 891.5" fill="none" data-name="AnchoringManager"></path>
+</g>
+<g transform="translate(240.75, 852.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="AnchoringManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="AnchoringManager">
+<a id="src/model/middleware/AnchoringManager.ts.AnchoringManager" xlink:href="src/model/middleware/AnchoringManager.ts"><text x="216.0" y="13.5" stroke="none" text-anchor="middle" data-name="AnchoringManager">AnchoringManager</text></a>
+
+</g>
+</g>
+<g transform="translate(240.75, 883.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="AnchoringManager">
+<g transform="translate(8, 8)" fill="#33322E" data-name="AnchoringManager">
+
+</g>
+</g>
+<g transform="translate(240.75, 891.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="AnchoringManager">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="AnchoringManager">
+<text x="0.0" y="13.5" stroke="none" data-name="AnchoringManager">-getDrawables(): Drawable[]</text>
+<text x="0.0" y="28.5" stroke="none" data-name="AnchoringManager">-getLastStroke(): Stroke</text>
+<text x="0.0" y="43.5" stroke="none" data-name="AnchoringManager">-getAllAnchorables(): Anchorable[]</text>
+<text x="0.0" y="58.5" stroke="none" data-name="AnchoringManager">-getClosestAnchorableToPoint(): [Anchorable, number]</text>
+<text x="0.0" y="73.5" stroke="none" data-name="AnchoringManager">-linkWithArrow(): void</text>
+<text x="0.0" y="88.5" stroke="none" data-name="AnchoringManager">+apply(): Promise&lt;boolean&gt;</text>
+
+</g>
+</g>
+</g>
+<g data-name="ShapeClassifier">
+<g fill="#eee8d5" stroke="#33322E" data-name="ShapeClassifier">
+<rect x="728.8" y="882.5" height="85.0" width="309.0" data-name="ShapeClassifier"></rect>
+<path d="M728.8 913.5 L1037.8 913.5" fill="none" data-name="ShapeClassifier"></path>
+<path d="M728.8 921.5 L1037.8 921.5" fill="none" data-name="ShapeClassifier"></path>
+</g>
+<g transform="translate(728.75, 882.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="ShapeClassifier">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="ShapeClassifier">
+<a id="src/model/middleware/ShapeClassifier.ts.ShapeClassifier" xlink:href="src/model/middleware/ShapeClassifier.ts"><text x="146.5" y="13.5" stroke="none" text-anchor="middle" data-name="ShapeClassifier">ShapeClassifier</text></a>
+
+</g>
+</g>
+<g transform="translate(728.75, 913.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ShapeClassifier">
+<g transform="translate(8, 8)" fill="#33322E" data-name="ShapeClassifier">
+
+</g>
+</g>
+<g transform="translate(728.75, 921.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ShapeClassifier">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ShapeClassifier">
+<text x="0.0" y="13.5" stroke="none" data-name="ShapeClassifier">+classify(): Promise&lt;PossibleShape&gt;</text>
+<text x="0.0" y="28.5" stroke="none" data-name="ShapeClassifier">+apply(): Promise&lt;boolean&gt;</text>
+
+</g>
+</g>
+</g>
+<g data-name="StrokeAdjuster">
+<g fill="#eee8d5" stroke="#33322E" data-name="StrokeAdjuster">
+<rect x="1077.8" y="875.0" height="100.0" width="340.0" data-name="StrokeAdjuster"></rect>
+<path d="M1077.8 906.0 L1417.8 906.0" fill="none" data-name="StrokeAdjuster"></path>
+<path d="M1077.8 914.0 L1417.8 914.0" fill="none" data-name="StrokeAdjuster"></path>
+</g>
+<g transform="translate(1077.75, 875)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="StrokeAdjuster">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="StrokeAdjuster">
+<a id="src/model/middleware/StrokeAdjuster.ts.StrokeAdjuster" xlink:href="src/model/middleware/StrokeAdjuster.ts"><text x="162.0" y="13.5" stroke="none" text-anchor="middle" data-name="StrokeAdjuster">StrokeAdjuster</text></a>
+
+</g>
+</g>
+<g transform="translate(1077.75, 906)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="StrokeAdjuster">
+<g transform="translate(8, 8)" fill="#33322E" data-name="StrokeAdjuster">
+
+</g>
+</g>
+<g transform="translate(1077.75, 914)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="StrokeAdjuster">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="StrokeAdjuster">
+<text x="0.0" y="13.5" stroke="none" data-name="StrokeAdjuster">+standardDeviation(): Promise&lt;boolean&gt;</text>
+<text x="0.0" y="28.5" stroke="none" data-name="StrokeAdjuster">+linearRegression(): Promise&lt;boolean&gt;</text>
+<text x="0.0" y="43.5" stroke="none" data-name="StrokeAdjuster">+apply(): Promise&lt;boolean&gt;</text>
+
+</g>
+</g>
+</g>
+<g data-name="Eraser">
+<g fill="#eee8d5" stroke="#33322E" data-name="Eraser">
+<rect x="1457.8" y="848.5" height="153.0" width="239.0" data-name="Eraser"></rect>
+<path d="M1457.8 879.5 L1696.8 879.5" fill="none" data-name="Eraser"></path>
+<path d="M1457.8 910.5 L1696.8 910.5" fill="none" data-name="Eraser"></path>
+</g>
+<g transform="translate(1457.75, 848.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Eraser">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Eraser">
+<a id="src/model/tools/Eraser.ts.Eraser" xlink:href="src/model/tools/Eraser.ts"><text x="111.5" y="13.5" stroke="none" text-anchor="middle" data-name="Eraser">Eraser</text></a>
+
+</g>
+</g>
+<g transform="translate(1457.75, 879.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Eraser">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Eraser">
+<text x="0.0" y="13.5" stroke="none" data-name="Eraser">-isErasing: boolean</text>
+
+</g>
+</g>
+<g transform="translate(1457.75, 910.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Eraser">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Eraser">
+<text x="0.0" y="13.5" stroke="none" data-name="Eraser">+onLeftMouseDown(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Eraser">+onLeftMouseUp(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Eraser">+onRightMouseDown(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Eraser">+onRightMouseUp(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Eraser">+onMouseMove(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="Pen">
+<g fill="#eee8d5" stroke="#33322E" data-name="Pen">
+<rect x="1736.8" y="848.5" height="153.0" width="239.0" data-name="Pen"></rect>
+<path d="M1736.8 879.5 L1975.8 879.5" fill="none" data-name="Pen"></path>
+<path d="M1736.8 910.5 L1975.8 910.5" fill="none" data-name="Pen"></path>
+</g>
+<g transform="translate(1736.75, 848.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Pen">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Pen">
+<a id="src/model/tools/Pen.ts.Pen" xlink:href="src/model/tools/Pen.ts"><text x="111.5" y="13.5" stroke="none" text-anchor="middle" data-name="Pen">Pen</text></a>
+
+</g>
+</g>
+<g transform="translate(1736.75, 879.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Pen">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Pen">
+<text x="0.0" y="13.5" stroke="none" data-name="Pen">-isDrawing: boolean</text>
+
+</g>
+</g>
+<g transform="translate(1736.75, 910.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Pen">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Pen">
+<text x="0.0" y="13.5" stroke="none" data-name="Pen">+onLeftMouseDown(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Pen">+onLeftMouseUp(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Pen">+onRightMouseDown(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Pen">+onRightMouseUp(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Pen">+onMouseMove(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="Selector">
+<g fill="#eee8d5" stroke="#33322E" data-name="Selector">
+<rect x="3279.3" y="788.5" height="273.0" width="289.0" data-name="Selector"></rect>
+<path d="M3279.3 819.5 L3568.3 819.5" fill="none" data-name="Selector"></path>
+<path d="M3279.3 910.5 L3568.3 910.5" fill="none" data-name="Selector"></path>
+</g>
+<g transform="translate(3279.25, 788.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Selector">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Selector">
+<a id="src/model/tools/Selector.ts.Selector" xlink:href="src/model/tools/Selector.ts"><text x="136.5" y="13.5" stroke="none" text-anchor="middle" data-name="Selector">Selector</text></a>
+
+</g>
+</g>
+<g transform="translate(3279.25, 819.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Selector">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Selector">
+<text x="0.0" y="13.5" stroke="none" data-name="Selector">-selected: Drawable[]</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Selector">-isSelecting: boolean</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Selector">-isMoving: boolean</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Selector">-selectStartPosition: Point</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Selector">-moveStartPosition: Point</text>
+
+</g>
+</g>
+<g transform="translate(3279.25, 910.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Selector">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Selector">
+<text x="0.0" y="13.5" stroke="none" data-name="Selector">-selectAvailableShapes(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Selector">-drawSelectionBox(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Selector">-moveSelectedShapes(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Selector">-drawSelectedBoundingBox(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Selector">+onLeftMouseDown(): void</text>
+<text x="0.0" y="88.5" stroke="none" data-name="Selector">+onLeftMouseUp(): void</text>
+<text x="0.0" y="103.5" stroke="none" data-name="Selector">+onRightMouseDown(): void</text>
+<text x="0.0" y="118.5" stroke="none" data-name="Selector">+onRightMouseUp(): void</text>
+<text x="0.0" y="133.5" stroke="none" data-name="Selector">+onMouseMove(): void</text>
+
+</g>
+</g>
+</g>
+<g data-name="Text">
+<g fill="#eee8d5" stroke="#33322E" data-name="Text">
+<rect x="2179.8" y="826.0" height="198.0" width="285.0" data-name="Text"></rect>
+<path d="M2179.8 857.0 L2464.8 857.0" fill="none" data-name="Text"></path>
+<path d="M2179.8 888.0 L2464.8 888.0" fill="none" data-name="Text"></path>
+</g>
+<g transform="translate(2179.75, 826)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Text">
+<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Text">
+<a id="src/model/tools/Text.ts.Text" xlink:href="src/model/tools/Text.ts"><text x="134.5" y="13.5" stroke="none" text-anchor="middle" data-name="Text">Text</text></a>
+
+</g>
+</g>
+<g transform="translate(2179.75, 857)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Text">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Text">
+<text x="0.0" y="13.5" stroke="none" data-name="Text">-inputElement: HTMLInputElement</text>
+
+</g>
+</g>
+<g transform="translate(2179.75, 888)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Text">
+<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Text">
+<text x="0.0" y="13.5" stroke="none" data-name="Text">+onLeftMouseDown(): void</text>
+<text x="0.0" y="28.5" stroke="none" data-name="Text">-createInputElement(): void</text>
+<text x="0.0" y="43.5" stroke="none" data-name="Text">-submitText(): void</text>
+<text x="0.0" y="58.5" stroke="none" data-name="Text">-removeInputElement(): void</text>
+<text x="0.0" y="73.5" stroke="none" data-name="Text">+onLeftMouseUp(): void</text>
+<text x="0.0" y="88.5" stroke="none" data-name="Text">+onRightMouseDown(): void</text>
+<text x="0.0" y="103.5" stroke="none" data-name="Text">+onRightMouseUp(): void</text>
+<text x="0.0" y="118.5" stroke="none" data-name="Text">+onMouseMove(): void</text>
+
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</svg>
