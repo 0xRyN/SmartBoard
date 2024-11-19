@@ -1,0 +1,48 @@
+.toolbox-wrapper {
+    position: absolute;
+    left: 2%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.toolbox {
+    display: flex;
+    flex-direction: column;
+    background-color: #333333;
+    color: #ffffff;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.tool-button {
+    background-color: #4a4a4a;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.3s, transform 0.3s;
+    color: #ffffff;
+}
+
+.tool-button:hover {
+    background-color: #626262;
+    transform: translateY(-2px);
+}
+
+.tool-button:active {
+    background-color: #505050;
+    transform: translateY(1px);
+}
+
+.toolbox-separator {
+    border: 0;
+    height: 1px;
+    background-color: #4a4a4a;
+    margin: 10px 0;
+}

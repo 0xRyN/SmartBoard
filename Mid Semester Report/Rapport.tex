@@ -1,0 +1,74 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\title{Rapport de Projet : Système de Dessin Intelligent}
+\author{Al Azawi Rayan}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Introduction}
+
+\subsection{Objectif du Projet}
+
+L'objectif de ce projet est de développer un système de dessin interactif intelligent qui permet aux utilisateurs de dessiner sur une interface de tableau blanc numérique. Le système utilise l'intelligence artificielle pour reconnaître les formes dessinées et offrir des fonctionnalités avancées comme la correction automatique, la classification des formes, et des suggestions basées sur le contexte.
+
+\subsection{Métriques}
+
+La réussite du projet sera évaluée à travers plusieurs métriques clés :
+\begin{itemize}
+  \setlength\itemsep{1em}
+  \item Précision de la reconnaissance des formes : La capacité du modèle d'IA à identifier correctement les formes dessinées par les utilisateurs (tests sur le modèle).
+  \item Temps de réponse du système : La rapidité avec laquelle le système traite les entrées des utilisateurs et fournit des retours (benchmarks sur le frontend).
+  \item Intelligence du whiteboard : la capacité du whiteboard a comprendre les intentions de l'utilisateur, par exemple de dessiner un segement lorsque le tracé s'en approche ou de lier un tracé a une forme lorsque le tracé est assez proche (tests utilisateur).
+  \item L'architecture du projet et la facilité à ajouter d'autres fonctionnalités (utilisation d'un ToolManager et d'un EventManager pour faciliter l'ajout d'outils, utilisation d'un MiddlewareManager pour faciliter l'ajout de fonctionnalités intelligentes après un tracé de l'utilisateur comme ajuster une ligne presque droite et connecter un tracé a une forme)
+\end{itemize}
+
+\section{Implémentation}
+
+\subsection{Architecture du Projet}
+
+Le projet est divisé en trois sous-projets, chacun ayant son propre répertoire et instructions d'installation.
+
+\subsubsection{IA, Modèle et Entraînement}
+
+\textbf{Technologies utilisées :} TensorFlow, OpenCV2.
+
+Ce sous-projet est responsable de l'extraction, de la transformation et du chargement des données d'entraînement dans un format acceptable, de la construction du modèle, de son entraînement et de son test. Après l'entraînement, le modèle est exporté au format .keras.
+
+\subsubsection{Serveur Backend WebSocket avec Connexion au Modèle}
+
+\textbf{Technologies utilisées :} TensorFlow, OpenCV2, Pillow, Websockets.
+
+Ce sous-projet s'occupe de démarrer un serveur WebSocket rapide pour communiquer avec le frontend, charger le modèle exporté par le premier sous-projet, translater et scaler les coordonées des points reçues du client, construire des images, les exporter avec Pillow et les prédire avec le modèle.
+
+\subsubsection{Application Frontend de Tableau Blanc}
+
+\textbf{Technologies utilisées :} TypeScript, Canvas2D, Websockets, React.
+
+L'application frontend permet aux utilisateurs de dessiner sur un tableau blanc interactif. Elle gère la saisie utilisateur, la logique de dessin, et communique avec le backend pour la classification des formes. Elle content beaucoup de fonctionnalités mathématiques / vectorielles standalone.
+
+\subsection{Structure du Code}
+
+Le code est organisé en modules et packages spécifiques à chaque sous-projet, avec une séparation claire des responsabilités. Les données sont représentées de manière à faciliter leur manipulation et traitement par les différentes technologies utilisées.
+
+\section{Jalons}
+
+\subsection{Tâches et Organisation Temporelle}
+
+Les tâches nécessaires à la finalisation du projet ont été identifiées et planifiées. Les prochaines taches seront :
+
+\begin{itemize}
+  \setlength\itemsep{1em}
+  \item \textbf{Tâche 1} : Amélioration de l'interface utilisateur (UI/UX) pour obtenir un produit déployable et user friendly.
+  \item \textbf{Tâche 2 }: Amélioration du modèle en utilisant des sources scientifiques.
+  \item \textbf{Tâche 3} : Préciser les sources scientifiques montrant l'efficacité des modèles CNN (convolutional neural network)
+  \item \textbf{Tâche 4} : Réaliser des tests approfondis, benchmark le frontend et avoir une bonne couverture de tests sur l'ensemble du code.
+\end{itemize}

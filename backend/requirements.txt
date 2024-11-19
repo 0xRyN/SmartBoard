@@ -1,0 +1,7 @@
+tensorflow
+pydantic
+pillow
+mypy
+asyncio
+opencv-python
+python-socketio
